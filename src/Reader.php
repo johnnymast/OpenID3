@@ -31,6 +31,10 @@ class Reader
         $this->filename = $filename;
     }
 
+    /**
+     * @return bool
+     * @throws OpenID3FileException
+     */
     public function parse()
     {
         $this->file = new \SplFileObject($this->filename);
@@ -38,12 +42,10 @@ class Reader
         if ($this->file->isReadable() == false)
             throw new OpenID3FileException($this->filename.' is not readable');
 
-
         $found = false;
 
-        foreach(['OpenID3\Parser\OpenID3V23', 'OpenID3\Parser\OpenID3V1'] as $class) {
+        foreach(['OpenID3\Parser\OpenID3V2', 'OpenID3\Parser\OpenID3V1'] as $class) {
             $parser = new $class($this->file);
-
             if ($parser->has_tag() == true) {
                 $this->parser = $parser;
                 $found = true;
@@ -52,9 +54,11 @@ class Reader
         }
         if ($found == true) {
            $info = $parser->parse();
+           return $info;
         } else {
-            throw new OpenID3FileException('We could not identify this file.');
+            throw new OpenID3FileException('We could not identify '.$this->filename);
         }
+        return false;
     }
 
 }

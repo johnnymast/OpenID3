@@ -1,7 +1,7 @@
 <?php
 namespace OpenID3\Parser;
 
-class OpenID3V23 implements ParserInterface
+class OpenID3V2 implements ParserInterface
 {
     const TAG22 = '2.2';
     const TAG23 = '2.3';
