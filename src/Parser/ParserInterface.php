@@ -1,10 +1,17 @@
 <?php
 namespace OpenID3\Parser;
-use OpenID3\Adapter\AdapterInterface;
 
-interface ParserInterface {
-    public function __construct(AdapterInterface $adapter);
+interface ParserInterface
+{
+    public function __construct(\SplFileObject $file);
+
+    public function has_tag();
+
     public function parse();
-	public function save();
-	public function info();
+
+    public function save();
+
+    public function info();
+
+    public function version();
 }

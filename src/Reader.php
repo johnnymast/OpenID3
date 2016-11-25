@@ -1,14 +1,21 @@
 <?php
 namespace OpenID3;
-use OpenID3\Adapter\AdapterInterface;
+use OpenID3\exceptions\OpenID3FileException;
+use OpenID3\Parser\OpenID3V1 as OpenID3V1;
+use OpenID3\Parser\OpenID3V23 as OpenID3V23;
 
 class Reader
 {
 
     /**
-     * @var AdapterInterface
+     * @var SplFileObject
      */
-    protected $adapter;
+    protected $file;
+
+    /**
+     * @var string
+     */
+    protected $filename = '';
 
     /**
      * @var ParserInterface
@@ -17,34 +24,37 @@ class Reader
 
     /**
      * Reader constructor.
-     * @param AdapterInterface $adapter
+     * @param string $filename
      */
-    public function __construct(AdapterInterface $adapter)
+    public function __construct(string $filename)
     {
-        $this->adapter = $adapter;
-    }
-
-    /**
-     * @return AdapterInterface
-     */
-    public function getAdapter()
-    {
-        return $this->adapter;
+        $this->filename = $filename;
     }
 
     public function parse()
     {
-        if ($this->getAdapter()->initialize()) {
-            echo 'ja';
-            if (($parserClass = $this->getAdapter()->identifyParser())) {
-                $this->parser = new $parserClass($this->getAdapter());
-                echo '-->'.$parserClass;
-            } else {
-                // Unknown ID3 ... Throw exception
-            }
-            $this->getAdapter()->terminate();
-        }
+        $this->file = new \SplFileObject($this->filename);
 
+        if ($this->file->isReadable() == false)
+            throw new OpenID3FileException($this->filename.' is not readable');
+
+
+        $found = false;
+
+        foreach(['OpenID3\Parser\OpenID3V23', 'OpenID3\Parser\OpenID3V1'] as $class) {
+            $parser = new $class($this->file);
+
+            if ($parser->has_tag() == true) {
+                $this->parser = $parser;
+                $found = true;
+                break;
+            }
+        }
+        if ($found == true) {
+           $info = $parser->parse();
+        } else {
+            throw new OpenID3FileException('We could not identify this file.');
+        }
     }
 
 }

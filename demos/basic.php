@@ -3,16 +3,15 @@ require 'autoload.php';
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
-use OpenID3\Adapter\Filesystem;
 use OpenID3\Reader;
 
+try {
+    $reader = new OpenID3\Reader(dirname(__FILE__) . "\\..\\youGotmail.mp3");
+    $info = $reader->parse();
 
-$reader = new OpenID3\Reader(
-    new OpenID3\adapter\Filesystem(dirname(__FILE__) . "\\..\\c.mp3")
-);
+} catch (OpenID3FileException $e) {
+    print_r($e);
+}
 
-$info = $reader->parse();
-
-print_r($info);
 
 echo 'Done';
