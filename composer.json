@@ -25,6 +25,7 @@
   },
   "require-dev": {
     "phpunit/phpunit": "5.6.2",
-    "redbox/hydrate": "v1.0"
+    "redbox/hydrate": "v1.0",
+    "squizlabs/php_codesniffer": "*"
   }
 }

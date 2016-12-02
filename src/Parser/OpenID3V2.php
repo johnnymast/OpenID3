@@ -22,14 +22,15 @@ class OpenID3V2 implements ParserInterface
      * OpenID3V23 constructor.
      * @param \SplFileObject $file
      */
-    public function __construct(\SplFileObject $file) {
+    public function __construct(\SplFileObject $file)
+    {
         $this->file = $file;
     }
 
     /**
      * @return bool
      */
-    public function has_tag()
+    public function hasTag()
     {
         $result = false;
         if ($this->file) {
@@ -42,13 +43,13 @@ class OpenID3V2 implements ParserInterface
         return $result;
     }
 
-
     /**
      * Return the tag version.
      *
      * @return string
      */
-    public function version() {
+    public function version()
+    {
         return $this->tag_version;
     }
 
@@ -66,5 +67,4 @@ class OpenID3V2 implements ParserInterface
     {
         // TODO: Implement info() method.
     }
-
 }

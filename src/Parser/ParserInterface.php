@@ -5,7 +5,7 @@ interface ParserInterface
 {
     public function __construct(\SplFileObject $file);
 
-    public function has_tag();
+    public function hasTag();
 
     public function parse();
 
