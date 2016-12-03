@@ -59,14 +59,4 @@ class OpenID3V2 implements ParserInterface
     {
         // TODO: Implement parse() method.
     }
-
-    public function save()
-    {
-        // TODO: Implement save() method.
-    }
-
-    public function info()
-    {
-        // TODO: Implement info() method.
-    }
 }

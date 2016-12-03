@@ -1,8 +1,8 @@
 <?php
 namespace OpenID3;
 
-use OpenID3\exceptions\MediaFileException;
 use OpenID3\Parser\ParserInterface;
+use OpenID3\Exceptions\MediaFileException;
 
 class Reader
 {

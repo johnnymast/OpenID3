@@ -11,9 +11,5 @@ interface ParserInterface
 
     public function parse();
 
-    public function save();
-
-    public function info();
-
     public function version();
 }

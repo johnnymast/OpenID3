@@ -1,7 +1,7 @@
 <?php
 namespace OpenID3\Parser;
 
-use OpenID3\exceptions\MediaFileException;
+use OpenID3\Exceptions\MediaFileException;
 use OpenID3\MediaFile;
 
 class OpenID3V1 implements ParserInterface
@@ -105,15 +105,5 @@ class OpenID3V1 implements ParserInterface
     public function version()
     {
         return $this->tag_version;
-    }
-
-    public function save()
-    {
-        // TODO: Implement save() method.
-    }
-
-    public function info()
-    {
-        // TODO: Implement info() method.
     }
 }
