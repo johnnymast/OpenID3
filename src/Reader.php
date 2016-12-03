@@ -2,6 +2,7 @@
 namespace OpenID3;
 
 use OpenID3\exceptions\MediaFileException;
+use OpenID3\Parser\ParserInterface;
 
 class Reader
 {
@@ -10,11 +11,6 @@ class Reader
      * @var MediaFile
      */
     protected $file;
-
-    /**
-     * @var string
-     */
-    protected $filename = '';
 
     /**
      * @var ParserInterface
@@ -32,16 +28,8 @@ class Reader
     }
 
     /**
-     * @return MediaFile
-     */
-    public function getMediaFile()
-    {
-        return $this->file;
-    }
-
-    /**
      * @return mixed
-     * @throws OpenID3FileException
+     * @throws MediaFileException
      */
     public function parse()
     {
@@ -56,6 +44,7 @@ class Reader
         $found = false;
 
         foreach (['OpenID3\Parser\OpenID3V2', 'OpenID3\Parser\OpenID3V1'] as $class) {
+            /** @var ParserInterface $parser */
             $parser = new $class($this->file);
             if ($parser->hasTag() == true) {
                 $this->parser = $parser;
@@ -64,6 +53,7 @@ class Reader
             }
         }
         if ($found == true) {
+            /** @var ParserInterface $parser */
             $info = $parser->parse();
             return $info;
         }

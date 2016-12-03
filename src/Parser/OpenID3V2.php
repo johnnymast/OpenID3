@@ -22,7 +22,7 @@ class OpenID3V2 implements ParserInterface
 
     /**
      * OpenID3V23 constructor.
-     * @param \SplFileObject $file
+     * @param MediaFile $file
      */
     public function __construct(MediaFile $file)
     {

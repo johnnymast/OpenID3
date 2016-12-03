@@ -1,7 +1,7 @@
 <?php
 namespace OpenID3\Parser;
 
-use OpenID3\exceptions\OpenID3FileException;
+use OpenID3\exceptions\MediaFileException;
 use OpenID3\MediaFile;
 
 class OpenID3V1 implements ParserInterface
@@ -11,7 +11,7 @@ class OpenID3V1 implements ParserInterface
     const TAG_UNKNOWN = 'Unknown';
 
     /**
-     * @var \MediaFile
+     * @var MediaFile
      */
     protected $file = null;
 
@@ -91,7 +91,7 @@ class OpenID3V1 implements ParserInterface
         }
 
         if ($this->tag_version == self::TAG_UNKNOWN) {
-            throw new OpenID3FileException('Could not figure out what version of ID3v1 this file belongs to');
+            throw new MediaFileException('Could not figure out what version of ID3v1 this file belongs to');
         }
 
         print_r($info);
