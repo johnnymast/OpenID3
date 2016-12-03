@@ -1,7 +1,7 @@
 <?php
 namespace OpenID3;
 
-use OpenID3\exceptions\OpenID3FileException;
+use OpenID3\exceptions\MediaFileException;
 
 class Reader
 {
@@ -32,13 +32,25 @@ class Reader
     }
 
     /**
+     * @return MediaFile
+     */
+    public function getMediaFile()
+    {
+        return $this->file;
+    }
+
+    /**
      * @return mixed
      * @throws OpenID3FileException
      */
     public function parse()
     {
-        if ($this->file->isReadable() == false) {
-            throw new OpenID3FileException($this->filename . ' is not readable');
+        if (!$this->file) {
+            throw new MediaFileException('invalid media file');
+        }
+
+        if ($this->file == false) {
+            throw new MediaFileException($this->file->getFilename() . ' is not readable');
         }
 
         $found = false;
@@ -55,6 +67,6 @@ class Reader
             $info = $parser->parse();
             return $info;
         }
-        throw new OpenID3FileException('We could not identify ' . $this->filename);
+        throw new MediaFileException('We could not identify ' . $this->file->getFilename());
     }
 }

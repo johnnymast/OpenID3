@@ -2,6 +2,7 @@
 namespace OpenID3\Parser;
 
 use OpenID3\exceptions\OpenID3FileException;
+use OpenID3\MediaFile;
 
 class OpenID3V1 implements ParserInterface
 {
@@ -10,7 +11,7 @@ class OpenID3V1 implements ParserInterface
     const TAG_UNKNOWN = 'Unknown';
 
     /**
-     * @var \SplTempFileObject
+     * @var \MediaFile
      */
     protected $file = null;
 
@@ -34,7 +35,7 @@ class OpenID3V1 implements ParserInterface
     protected $tag_version = self::TAG_UNKNOWN;
 
 
-    public function __construct(\SplFileObject $file)
+    public function __construct(MediaFile $file)
     {
         $this->file = $file;
     }

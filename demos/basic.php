@@ -5,6 +5,7 @@ ini_set('display_errors', true);
 
 use OpenID3\Reader;
 use OpenID3\MediaFile;
+use OpenID3\Exceptions\MediaFileException;
 
 try {
     $reader = new OpenID3\Reader(
@@ -13,7 +14,9 @@ try {
 
     $info = $reader->parse();
 
-} catch (OpenID3FileException $e) {
+} catch (MediaFileException $e) {
+    print_r($e);
+} catch (Exception $e) {
     print_r($e);
 }
 

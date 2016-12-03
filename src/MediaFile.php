@@ -7,13 +7,14 @@ class MediaFile extends \SplFileObject
     /**
      * @var bool
      */
-    protected $is_parsed = false;
+    protected $parsed = false;
+
 
     /**
      * @return bool
      */
-    public function isIsParsed()
+    public function isParsed()
     {
-        return $this->is_parsed;
+        return $this->parsed;
     }
 }

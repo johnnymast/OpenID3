@@ -1,6 +1,8 @@
 <?php
 namespace OpenID3\Parser;
 
+use OpenID3\MediaFile;
+
 class OpenID3V2 implements ParserInterface
 {
     const TAG22 = '2.2';
@@ -9,7 +11,7 @@ class OpenID3V2 implements ParserInterface
     const TAG_UNKNOWN = 'Unknown';
 
     /**
-     * @var \SplTempFileObject
+     * @var MediaFile
      */
     protected $file = null;
 
@@ -22,7 +24,7 @@ class OpenID3V2 implements ParserInterface
      * OpenID3V23 constructor.
      * @param \SplFileObject $file
      */
-    public function __construct(\SplFileObject $file)
+    public function __construct(MediaFile $file)
     {
         $this->file = $file;
     }
