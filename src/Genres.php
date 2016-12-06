@@ -217,11 +217,13 @@ class Genres
     /**
      * @return array
      */
-    public static function getGenreList() {
+    public static function getGenreList()
+    {
         $genres = self::$genres;
         unset($genres[-1]);
         return $genres;
     }
+
     /**
      * @param string $genre_id
      * @return mixed
