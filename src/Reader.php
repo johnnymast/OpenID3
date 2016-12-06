@@ -54,8 +54,10 @@ class Reader
         }
         if ($found == true) {
             /** @var ParserInterface $parser */
-            $info = $parser->parse();
-            return $info;
+            $tags = $parser->parse();
+            $this->file->setTags($tags);
+            $this->file->setParsed(true);
+            return $this->file;
         }
         throw new MediaFileException('We could not identify ' . $this->file->getFilename());
     }

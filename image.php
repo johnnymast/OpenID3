@@ -8,11 +8,17 @@
  * @since Version 1.0
  */
 error_reporting(E_ALL);
+ini_set('display_errors', true);
 
 require 'ID3/ID3.php';
 
-$file = new ID3('c.mp3');
+$file = new ID3(dirname(__FILE__).'/youGotmail.mp3');
 $info = $file->fileinfo();
+
+
+print_r($info['fileinfo']['TAGS']);
+return;
+exit;
 $info = $info['fileinfo']['TAGS']['APIC'];
 
 header('Content-type: '.$info['MIME']);

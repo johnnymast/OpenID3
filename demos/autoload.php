@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
 /**
  * We want to make sure we load the correct autoloader
  * where ever we are.

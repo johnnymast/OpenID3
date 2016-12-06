@@ -3,6 +3,7 @@ namespace OpenID3\Parser;
 
 use OpenID3\Exceptions\MediaFileException;
 use OpenID3\MediaFile;
+use OpenID3\Genres;
 
 class OpenID3V1 implements ParserInterface
 {
@@ -94,7 +95,16 @@ class OpenID3V1 implements ParserInterface
             throw new MediaFileException('Could not figure out what version of ID3v1 this file belongs to');
         }
 
-        print_r($info);
+        $ident = 'id3v10';
+        if ($this->tag_version == self::TAG11) {
+            $ident = 'id3v11';
+        }
+
+        $tags = [];
+
+        $tags[$ident] = $tags[$ident.'_raw'] = $info;
+        $tags[$ident]['Genre'] = Genres::getGenre($info['Genre']);
+        return $tags;
     }
 
     /**
