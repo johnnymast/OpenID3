@@ -2,6 +2,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
+date_default_timezone_set('EUROPE/AMSTERDAM');
+
 /**
  * We want to make sure we load the correct autoloader
  * where ever we are.
