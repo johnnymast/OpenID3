@@ -1,7 +1,8 @@
 <?php
 namespace OpenID3\Parser;
 
-use OpenID3\Debug;
+use OpenID3\BinaryReader;
+use OpenID3\Frame;
 use OpenID3\MediaFile;
 
 class OpenID3V2 implements ParserInterface
@@ -15,6 +16,8 @@ class OpenID3V2 implements ParserInterface
      * @var MediaFile
      */
     protected $file = null;
+
+    protected $header = [];
 
     /**
      * @var string
@@ -35,15 +38,28 @@ class OpenID3V2 implements ParserInterface
      */
     public function hasTag()
     {
-        $result = false;
-        if ($this->file) {
-            $this->file->fseek(0, SEEK_SET);
-            $tag = $this->file->fread(10);
-            if (substr($tag, 0, 3) == 'ID3') {
-                $result = true;
+        /*
+          ** ID3v2/file identifier   "ID3"
+          ** ID3v2 version           $03 00
+          ** ID3v2 flags             %abc00000
+          ** ID3v2 size              4 * %0xxxxxxx
+          */
+        $this->file->rewind();
+        $this->file->clearMap()
+            ->addMap('TAG', BinaryReader::TEXT, 3)
+            ->addMap('VERSION', BinaryReader::TEXT, 2)
+            ->addMap('FLAGS', BinaryReader::TEXT, 1)
+            ->addMap('SIZE', BinaryReader::INT, 4);
+
+        $this->file->setMaxPos(10);
+        $header= $this->file->read();
+        if (isset($header['TAG']) == true) {
+            if ($header['TAG'] == 'ID3') {
+                $this->header = $header;
+                return true;
             }
         }
-        return $result;
+        return false;
     }
 
     /**
@@ -56,61 +72,61 @@ class OpenID3V2 implements ParserInterface
         return $this->tag_version;
     }
 
+    private function getTags()
+    {
+        return ['TALB', 'TBPM', 'TCOM', 'TCON', 'TCOP', 'TDAT', 'TDLY', 'TENC',
+            'TEXT', 'TFLT', 'TIME', 'TIT1', 'TIT2', 'TIT3', 'TKEY', 'TLAN',
+            'TLEN', 'TMED', 'TOAL', 'TOFN', 'TOLY', 'TOPE', 'TORY', 'TOWN',
+            'TPE1', 'TPE2', 'TPE3', 'TPE4', 'TPOS', 'TPUB', 'TRCK', 'TRDA',
+            'TRSN', 'TRSO', 'TSIZ', 'TSRC', 'TSSE', 'TYER', 'TDRC'];
+    }
+
     public function parse()
     {
-        $this->file->fseek(0, SEEK_SET);
-        $header = $this->file->fread(10);
 
-        /*
-        ** ID3v2/file identifier   "ID3"
-        ** ID3v2 version           $03 00
-        ** ID3v2 flags             %abc00000
-        ** ID3v2 size              4 * %0xxxxxxx
-        */
-        $header_info = [
-            'TAG' => [0, 3], // string
-            'VERSION' => [3, 2], // $ =  hex
-            'FLAGS' => [5, 1], // %x is used to indicate a bit with unknown content.
-            'SIZE' => [6, 4]  // dec
-        ];
+        // TODO extended header
+        // TODO handle corrupt headers
 
-        $info = [];
-        foreach ($header_info as $key => $positions) {
-            $length = $positions[1];
-            $info[$key] = trim(substr($header, $positions[0], $length));
-            $info[$key] = trim($info[$key]);
+        $this->file->clearMap()
+            ->addMap('FRAMEID', BinaryReader::TEXT, 4)
+            ->addMap('SIZE', BinaryReader::INT, 4)
+            ->addMap('FLAGS', BinaryReader::TEXT, 2)
+            ->addMap('BODY', BinaryReader::VALUE_OF, 'SIZE');
 
-            echo "$key => " . (strlen($info[$key]) + 1) . "\n";
-            if ($key == 'VERSION') {
-                /**
-                 * echo 'Major: '.Debug::hexDump($info['VERSION'][0]);
-                 * echo 'Minor: '.Debug::hexDump($info['VERSION'][1]);
-                 */
 
-                $info[$key] = $info[$key];
-            } elseif ($key == 'SIZE') {
-              $info[$key] = intval(bin2hex($info[$key]), 16);
-            } elseif ($key == 'FLAGS') {
-                $info[$key] = $info[$key];
-            } elseif ($key == 'TAG') {
+        $this->file->setMaxPos($this->header['SIZE']);
+
+        $alltags = $this->getTags();
+        $frames = [];
+        while (($tag = $this->file->read())) {
+            if (!in_array($tag['FRAMEID'], $alltags)) {
                 continue;
             }
-        }
 
-        $ident = 'id3v2'.ord($info['VERSION'][0]);//.ord($info['VERSION'][1]);
+            if ($tag['FRAMEID'][0] === "T") {
+                if (intval(bin2hex($tag['BODY']), 16) === 1) {
+                    $tag['BODY'] = mb_convert_encoding(substr($tag['BODY'], 1), 'UTF-8', 'UTF-16');
+                }
+            }
+
+            if ($tag['FRAMEID'] == 'APIC') {
+                $type = 'png';
+              //  $tag['BODY'] = $base64 = 'data:image/' . $type . ';base64,' . base64_encode($tag['BODY']);
+            }
+
+            $frames[] = $tag;
+        };
+
+
+        $ident = 'id3v2' . ord($this->header['VERSION'][0]);//.ord($info['VERSION'][1]);
 
         $tags = [];
-        $header = [] ;
-        $header['majorversion'] = ord($info['VERSION'][0]);
-        $header['minorversion'] = isset($info['VERSION'][1]) ?  ord($info['VERSION'][1]) : 0;
+        $header = [];
+        $header['majorversion'] = ord($this->header['VERSION'][0]);
+        $header['minorversion'] = isset($this->header['VERSION'][1]) ? ord($this->header['VERSION'][1]) : 0;
+        $header['tags'] = $frames;
 
-
-        $tags[$ident] = $tags[$ident.'_raw'] = $header;
-       // $tags[$ident]['Genre'] = Genres::getGenre($info['Genre']);
-
-
-     //   echo '>'.Debug::hexDump($info['SIZE']).'<';
-        //rint_r($info['VERSION'][1]);
-        print_r($tags);
+        $tags[$ident] = $tags[$ident . '_raw'] = $header;
+        return $tags;
     }
 }

@@ -5,7 +5,7 @@ namespace OpenID3;
  * Class MediaFile
  * @package OpenID3
  */
-class MediaFile extends \SplFileObject
+class MediaFile extends BinaryReader
 {
 
     /**

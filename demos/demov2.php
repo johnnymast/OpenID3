@@ -6,7 +6,7 @@ use OpenID3\MediaFile;
 
 try {
     $reader = new OpenID3\Reader(
-        new MediaFile('../ebert.mp3')
+        new MediaFile('../2imgs.mp3')
     );
 
     $info = $reader->parse();
